@@ -621,7 +621,7 @@ class CursorKind(object):
     @staticmethod
     def from_id(id):
         if id >= len(CursorKind._kinds) or CursorKind._kinds[id] is None:
-            raise ValueError,'Unknown cursor kind'
+            raise ValueError,'Unknown cursor kind %d' % id
         return CursorKind._kinds[id]
 
     @staticmethod
