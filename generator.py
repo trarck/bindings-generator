@@ -563,11 +563,15 @@ class NativeFunction(object):
         self.is_ctor = is_ctor
         gen = current_class.generator if current_class else generator
         config = gen.config
+        
+        print("Gen fun "+ self.func_name)
+
         if not is_ctor:
-            tpl = Template(file=os.path.join(gen.target, "templates", "function.h"),
-                        searchList=[current_class, self])
-            if not is_override:
-                gen.head_file.write(str(tpl))
+                tpl = Template(file=os.path.join(gen.target, "templates", "function.h"),
+                            searchList=[current_class, self])
+                if not is_override:
+                    gen.head_file.write(str(tpl))
+        
         if self.static:
             if config['definitions'].has_key('sfunction'):
                 tpl = Template(config['definitions']['sfunction'],
@@ -665,8 +669,13 @@ class NativeOverloadedFunction(object):
         gen = current_class.generator
         config = gen.config
         static = self.implementations[0].static
+        print("Gen overide "+ self.func_name)
         if not is_ctor:
-            tpl = Template(file=os.path.join(gen.target, "templates", "function.h"),
+            if gen.script_type == "csharp":
+                tpl = Template(file=os.path.join(gen.target, "templates", "function_overloaded.h"),
+                        searchList=[current_class, self])
+            else:
+                tpl = Template(file=os.path.join(gen.target, "templates", "function.h"),
                         searchList=[current_class, self])
             if not is_override:
                 gen.head_file.write(str(tpl))
@@ -751,6 +760,7 @@ class NativeClass(object):
         parse the current cursor, getting all the necesary information
         '''
         self._deep_iterate(self.cursor)
+        print(self.class_name+":"+str(len(self.override_methods)))
 
     def methods_clean(self):
         '''
@@ -760,7 +770,7 @@ class NativeClass(object):
         for name, impl in self.methods.iteritems():
             should_skip = False
             if name == 'constructor':
-                should_skip = True
+                should_skip = True                
             else:
                 if self.generator.should_skip(self.class_name, name):
                     should_skip = True
@@ -916,7 +926,7 @@ class NativeClass(object):
                     return False
                 if m.is_override:
                     if NativeClass._is_method_in_parents(self, registration_name):
-                        if self.generator.script_type == "lua":
+                        if self.generator.script_type == "lua" or self.generator.script_type == "csharp":
                             if not self.override_methods.has_key(registration_name):
                                 self.override_methods[registration_name] = m
                             else:
@@ -967,8 +977,8 @@ class NativeClass(object):
                     m.is_constructor = True
                     self.methods['constructor'] = m
             return True
-        # else:
-            # print >> sys.stderr, "unknown cursor: %s - %s" % (cursor.kind, cursor.displayname)
+        #else:
+        #    print >> sys.stderr, "unknown cursor: %s - %s" % (cursor.kind, cursor.displayname)
         return False
 
 class Generator(object):

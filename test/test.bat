@@ -66,7 +66,7 @@ echo ---
 
 :: Generate bindings for cocos2dx
 echo "Generating bindings for simpletest with Android headers..."
-python %CXX_GENERATOR_ROOT%/generator.py %CXX_GENERATOR_ROOT%/test/test.ini -t spidermonkey -s testandroid -o %OUTPUT_DIR%
+python %CXX_GENERATOR_ROOT%/generator.py %CXX_GENERATOR_ROOT%/test/test.ini -t csharp -s testandroid -o %OUTPUT_DIR%
 if %errorlevel% neq 0 goto ERROR
 
 :: Change the generated file format from DOS to UNIX.
