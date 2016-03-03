@@ -26,7 +26,7 @@ if defined NDK_ROOT (echo NDK_ROOT is defined.) else (
     exit /b 1
     )
 
-set LLVM=%NDK_ROOT%/toolchains/llvm-3.4/prebuilt/
+set LLVM=%NDK_ROOT%/toolchains/llvm-3.3/prebuilt/
 if not exist "%NDK_ROOT%/toolchains/llvm-3.3/prebuilt/" set LLVM=%NDK_ROOT%/toolchains/llvm-3.4/prebuilt/
 
 :: Check use 32-bit or 64-bit
