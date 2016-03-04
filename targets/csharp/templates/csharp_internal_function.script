@@ -1,0 +1,26 @@
+## ===== function name
+        [DllImport("${generator.name}", CallingConvention =CallingConvention.Cdecl,
+            EntryPoint="csharp_${generator.prefix}_${class_name}_${func_name}")]
+        internal static extern $generator.csharp_typename_from_native($ret_type) ${func_name}(#slurp
+## ===== self point in 
+#if not $static and not $is_constructor
+global::System.IntPtr instance#slurp
+    #if $min_args > 0
+,#slurp
+    #end if
+#end if
+## ===== parameters 
+#if $min_args > 0
+    #set $length = len($arguments)
+    #set $index = 0
+    #for $arg in $arguments
+        #if $index < $length - 1 
+$generator.csharp_typename_from_native($arg) $argumtntTips[$index],#slurp
+        #else 
+$generator.csharp_typename_from_native($arg) $argumtntTips[$index]#slurp
+        #end if
+        #set $index = $index + 1
+    #end for
+#end if
+);
+

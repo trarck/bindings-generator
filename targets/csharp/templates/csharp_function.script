@@ -1,0 +1,47 @@
+## ===== function name
+    $generator.csharp_typename_from_native($ret_type) ${func_name}(#slurp
+## ===== parameters 
+#if $min_args > 0
+    #set $length = len($arguments)
+    #set $index = 0
+    #for $arg in $arguments
+        #if $index < $length - 1 
+$generator.csharp_typename_from_native($arg) $argumtntTips[$index],#slurp
+        #else 
+$generator.csharp_typename_from_native($arg) $argumtntTips[$index]#slurp
+        #end if
+        #set $index = $index + 1
+    #end for
+#end if
+){
+## ===== call function
+#if str($ret_type) != "void"
+        return Internal.${func_name}(#slurp
+#else
+    #if $is_constructor
+        __Instance=Internal.ctor(#slurp
+    #else
+        Internal.${func_name}(#slurp
+    #end if
+#end if
+## ===== instance parameter
+#if not $static and not $is_constructor
+__Instance#slurp
+    #if $min_args > 0
+,#slurp
+    #end if
+#end if
+#if $min_args > 0
+    #set $index = 0
+    #for $arg in $arguments
+        #if $index < $length - 1 
+$argumtntTips[$index],#slurp
+        #else 
+$argumtntTips[$index]#slurp
+        #end if
+        #set $index = $index + 1
+    #end for
+#end if
+);
+    }
+

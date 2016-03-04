@@ -1,0 +1,22 @@
+using System;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+
+#set generator = $current_class.generator
+
+/**
+ * @class ${current_class.class_name}
+ */
+#if $generator.target_ns
+namespace ${generator.target_ns}
+{
+#end if
+public class ${current_class.target_class_name} : IDisposable
+{
+    public global::System.IntPtr __Instance { get; protected set; }
+    
+    public void Dispose()
+    {
+        Internal.Destroy(__Instance);
+    }
+

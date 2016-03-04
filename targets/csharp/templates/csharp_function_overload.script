@@ -1,26 +1,38 @@
 #set $idx = 0
 #for func in $implementations
 ## ===== function name
-${func.ret_type} csharp_${generator.prefix}_${class_name}_${func.func_name}_${idx}(#slurp
+    $generator.csharp_typename_from_native($func.ret_type) ${func.func_name}(#slurp
 ## ===== parameters 
     #if $func.min_args > 0
         #set $length = len($func.arguments)
         #set $index = 0
         #for $arg in $func.arguments
             #if $index < $length - 1 
-$arg $func.argumtntTips[$index],#slurp
+$generator.csharp_typename_from_native($arg) $func.argumtntTips[$index],#slurp
             #else 
-$arg $func.argumtntTips[$index]#slurp
+$generator.csharp_typename_from_native($arg) $func.argumtntTips[$index]#slurp
             #end if
             #set $index = $index + 1
         #end for
     #end if
 ){
 ## ===== call function
-    #if $func.ret_type
-    return #slurp
+    #if str($func.ret_type) != "void"
+        return Internal.${func.func_name}#slurp
+    #else
+        #if $func.is_constructor
+        __Instance=Internal.ctor_${idx}(#slurp
+        #else
+        Internal.${func.func_name}(#slurp
+        #end if
     #end if
-${class_name}::${func.func_name}(#slurp
+## ===== instance parameter
+    #if not $func.static and not $func.is_constructor
+__Instance#slurp
+        #if $func.min_args > 0
+,#slurp
+        #end if
+    #end if
     #if $func.min_args > 0
         #set $index = 0
         #for $arg in $func.arguments
@@ -33,7 +45,7 @@ $func.argumtntTips[$index]#slurp
         #end for
     #end if
 );
-}
+    }
 
     #set $idx = $idx + 1
 #end for

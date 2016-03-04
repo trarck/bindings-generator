@@ -1,6 +1,7 @@
+#set $idx = 0
 #for func in $implementations
 ## ===== function name
-${class_name}* csharp_${generator.prefix}_${class_name}_new(#slurp
+${class_name}* csharp_${generator.prefix}_${class_name}_new_${idx}(#slurp
 ## ===== parameters 
     #if $func.min_args > 0
         #set $length = len($func.arguments)
@@ -31,4 +32,5 @@ $func.argumtntTips[$index]#slurp
 );
 }
 
+    #set $idx = $idx + 1
 #end for

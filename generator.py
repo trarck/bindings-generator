@@ -594,7 +594,7 @@ class NativeFunction(object):
                         tpl = Template(config['definitions']['ctor'],
                                     searchList=[current_class, self])
                     self.signature_name = str(tpl)
-            if self.is_constructor and gen.script_type == "spidermonkey" :
+            if self.is_constructor and (gen.script_type == "spidermonkey" or gen.script_type == "csharp") :
                 if not is_ctor:
                     tpl = Template(file=os.path.join(gen.target, "templates", "constructor.c"),
                                                 searchList=[current_class, self])
@@ -616,7 +616,18 @@ class NativeFunction(object):
             else:
                 if gen.script_type == "lua" and current_class != None :
                     current_class.doc_func_file.write(str(apidoc_function_script))
+        if gen.script_type == "csharp":
+                csharp_internal_function_script = Template(file=os.path.join(gen.target,
+                                                        "templates",
+                                                        "csharp_internal_function.script"),
+                                      searchList=[current_class, self])
+                current_class.csharp_internal+=str(csharp_internal_function_script)
 
+                csharp_function_script = Template(file=os.path.join(gen.target,
+                                                        "templates",
+                                                        "csharp_function.script"),
+                                      searchList=[current_class, self])
+                current_class.csharp_file.write(str(csharp_function_script))
 
 class NativeOverloadedFunction(object):
     def __init__(self, func_array):
@@ -670,15 +681,17 @@ class NativeOverloadedFunction(object):
         config = gen.config
         static = self.implementations[0].static
         print("Gen overide "+ self.func_name)
+           
         if not is_ctor:
             if gen.script_type == "csharp":
                 tpl = Template(file=os.path.join(gen.target, "templates", "function_overloaded.h"),
-                        searchList=[current_class, self])
+                    searchList=[current_class, self])
             else:
                 tpl = Template(file=os.path.join(gen.target, "templates", "function.h"),
-                        searchList=[current_class, self])
+                    searchList=[current_class, self])
             if not is_override:
                 gen.head_file.write(str(tpl))
+        
         if static:
             if config['definitions'].has_key('sfunction'):
                 tpl = Template(config['definitions']['sfunction'],
@@ -701,8 +714,12 @@ class NativeOverloadedFunction(object):
                         tpl = Template(config['definitions']['ctor'],
                                         searchList=[current_class, self])
                     self.signature_name = str(tpl)
-            tpl = Template(file=os.path.join(gen.target, "templates", "ifunction_overloaded.c"),
-                            searchList=[current_class, self])
+            if self.is_constructor and gen.script_type == "csharp":
+                tpl = Template(file=os.path.join(gen.target, "templates", "constructor_overloaded.c"),
+                    searchList=[current_class, self])
+            else:
+                tpl = Template(file=os.path.join(gen.target, "templates", "ifunction_overloaded.c"),
+                    searchList=[current_class, self])
         if not is_override:
             gen.impl_file.write(str(tpl))
 
@@ -720,6 +737,19 @@ class NativeOverloadedFunction(object):
                                                         "apidoc_function_overload.script"),
                                       searchList=[current_class, self])
                     gen.doc_file.write(str(apidoc_function_overload_script))
+
+            if gen.script_type == "csharp":
+                csharp_internal_function_overload_script = Template(file=os.path.join(gen.target,
+                                                        "templates",
+                                                        "csharp_internal_function_overload.script"),
+                                      searchList=[current_class, self])
+                current_class.csharp_internal+=str(csharp_internal_function_overload_script)
+
+                csharp_function_overload_script = Template(file=os.path.join(gen.target,
+                                                        "templates",
+                                                        "csharp_function_overload.script"),
+                                      searchList=[current_class, self])
+                current_class.csharp_file.write(str(csharp_function_overload_script))
 
 
 class NativeClass(object):
@@ -760,7 +790,6 @@ class NativeClass(object):
         parse the current cursor, getting all the necesary information
         '''
         self._deep_iterate(self.cursor)
-        print(self.class_name+":"+str(len(self.override_methods)))
 
     def methods_clean(self):
         '''
@@ -810,6 +839,22 @@ class NativeClass(object):
             self.is_ref_class = self._is_ref_class()
 
         config = self.generator.config
+
+        if self.generator.script_type == "csharp":
+            csharpfuncfilepath = os.path.join(self.generator.outdir + "/csharp", self.class_name + ".cs")
+            self.csharp_file = open(csharpfuncfilepath, "w+")
+            csharp_classhead_script  = Template(file=os.path.join(self.generator.target,
+                                                         "templates",
+                                                         "csharp_classhead.script"),
+                                       searchList=[{"current_class": self}])
+            self.csharp_file.write(str(csharp_classhead_script))
+            self.csharp_internal = ""
+            csharp_internal_classhead_script  = Template(file=os.path.join(self.generator.target,
+                                                         "templates",
+                                                         "csharp_internal_classhead.script"),
+                                       searchList=[{"current_class": self}])
+            self.csharp_internal+=str(csharp_internal_classhead_script)
+
         prelude_h = Template(file=os.path.join(self.generator.target, "templates", "prelude.h"),
                             searchList=[{"current_class": self}])
         prelude_c = Template(file=os.path.join(self.generator.target, "templates", "prelude.c"),
@@ -856,6 +901,21 @@ class NativeClass(object):
                                        searchList=[{"current_class": self}])
             self.doc_func_file.write(str(apidoc_fun_foot_script))
             self.doc_func_file.close()
+        
+        if self.generator.script_type == "csharp":
+            #internal class
+            csharp_internal_classfoot_script  = Template(file=os.path.join(self.generator.target,
+                                                         "templates",
+                                                         "csharp_internal_classfoot.script"),
+                                       searchList=[{"current_class": self}])
+            self.csharp_internal+=str(csharp_internal_classfoot_script)
+            #csharp class
+            csharp_classfoot_script  = Template(file=os.path.join(self.generator.target,
+                                                         "templates",
+                                                         "csharp_classfoot.script"),
+                                       searchList=[{"current_class": self}])
+            self.csharp_file.write(str(csharp_classfoot_script))
+            self.csharp_file.close()
     def _deep_iterate(self, cursor=None, depth=0):
         for node in cursor.get_children():
             # print("%s%s - %s" % ("> " * depth, node.displayname, node.kind))
@@ -984,6 +1044,7 @@ class NativeClass(object):
 class Generator(object):
     def __init__(self, opts):
         self.index = cindex.Index.create()
+        self.name=opts['name']
         self.outdir = opts['outdir']
         self.prefix = opts['prefix']
         self.headers = opts['headers'].split(' ')
@@ -1197,6 +1258,11 @@ class Generator(object):
         else:
             docfilepath = os.path.join(docfiledir, self.out_file + "_api.js")
         
+        if self.script_type=="csharp" :
+            csharpfiledir   = self.outdir + "/csharp"
+            if not os.path.exists(csharpfiledir):
+                os.makedirs(csharpfiledir)
+
         self.impl_file = open(implfilepath, "w+")
         self.head_file = open(headfilepath, "w+")
         self.doc_file = open(docfilepath, "w+")
@@ -1390,6 +1456,30 @@ class Generator(object):
                     return namespace_class_name.replace("*","").replace("const ", "").replace(k,v)
         return namespace_class_name.replace("*","").replace("const ","")
 
+    def csharp_typename_from_native(self, native_type, is_ret = False):
+        conversions = self.config['conversions']
+        to_replace = None
+        if conversions.has_key('from_native'):
+            from_native_dict = conversions['from_native']
+            to_replace = NativeType.dict_replace_value_re(from_native_dict, [native_type.namespaced_name])
+
+        if to_replace:
+            return to_replace
+
+        if native_type.namespaced_name.find("std::") == 0:
+            if native_type.namespaced_name.find("std::string") == 0:
+                return "string"
+            if native_type.namespaced_name.find("std::vector") == 0:
+                return "IList"
+            if native_type.namespaced_name.find("std::map") == 0 or native_type.namespaced_name.find("std::unordered_map") == 0:
+                return "IDictionary"
+            if native_type.namespaced_name.find("std::function") == 0:
+                return "IntPtr"
+        if native_type.namespaced_name.find("char *") !=-1 or native_type.namespaced_name.find("char*") !=-1:
+            return "string"
+        if native_type.is_pointer or native_type.is_object or native_type.is_function:
+            return "IntPtr"
+        return native_type.namespaced_name.replace("*","").replace("const ","")
 
     def api_param_name_from_native(self,native_name):
         lower_name = native_name.lower()
@@ -1517,6 +1607,7 @@ def main():
         for s in sections:
             print "\n.... .... Processing section", s, "\n"
             gen_opts = {
+                'name': config.get(s, 'name'),
                 'prefix': config.get(s, 'prefix'),
                 'headers':    (config.get(s, 'headers'        , 0, dict(userconfig.items('DEFAULT')))),
                 'replace_headers': config.get(s, 'replace_headers') if config.has_option(s, 'replace_headers') else None,
