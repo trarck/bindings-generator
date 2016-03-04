@@ -3,9 +3,8 @@
 #set constructor = $current_class.methods.constructor
 ${current_class.methods.constructor.generate_code($current_class)}
 #end if
-
 #set generator = $current_class.generator
-void csharp_${generator.prefix}_${current_class.class_name}_finalize(${current_class.class_name} *self)
+void csharp_${generator.prefix}_${current_class.class_name}_delete(${current_class.class_name} *self)
 {
     if(self!=NULL){
         delete self;

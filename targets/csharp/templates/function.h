@@ -1,6 +1,18 @@
-${ret_type} csharp_${generator.prefix}_${class_name}_${func_name}(${class_name}* self#slurp
-#if $min_args > 0
+## ===== function name
+#if $is_constructor
+${class_name}* csharp_${generator.prefix}_${class_name}_new(#slurp
+#else
+${ret_type} csharp_${generator.prefix}_${class_name}_${func_name}(#slurp
+#end if
+## ===== self point in 
+#if not $static and not $is_constructor
+${class_name}* self#slurp
+    #if $min_args > 0
 ,#slurp
+    #end if
+#end if
+## ===== parameters 
+#if $min_args > 0
     #set $length = len($arguments)
     #set $index = 0
     #for $arg in $arguments

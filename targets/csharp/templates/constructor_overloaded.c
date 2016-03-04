@@ -1,6 +1,6 @@
 #for func in $implementations
 ## ===== function name
-${func.ret_type} csharp_${generator.prefix}_${class_name}_${func.func_name}(#slurp
+${class_name}* csharp_${generator.prefix}_${class_name}_new(#slurp
 ## ===== parameters 
     #if $func.min_args > 0
         #set $length = len($func.arguments)
@@ -16,10 +16,7 @@ $arg $func.argumtntTips[$index]#slurp
     #end if
 ){
 ## ===== call function
-    #if $func.ret_type
-    return #slurp
-    #end if
-${class_name}::${func.func_name}(#slurp
+    return new ${class_name}(#slurp
     #if $func.min_args > 0
         #set $index = 0
         #for $arg in $func.arguments
