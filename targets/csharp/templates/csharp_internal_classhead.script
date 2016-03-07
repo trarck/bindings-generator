@@ -1,6 +1,12 @@
+#set generator = $current_class.generator
     public class Internal
     {
+        [DllImport("${generator.name}", CallingConvention =CallingConvention.Cdecl,
+            EntryPoint="csharp_${generator.prefix}_${current_class.class_name}_delete")]
+        internal static extern void Destroy(global::System.IntPtr instance);
 #if not $current_class.methods.has_key('constructor')
-    
-    
+        [DllImport("${generator.name}", CallingConvention =CallingConvention.Cdecl,
+            EntryPoint="csharp_${generator.prefix}_${current_class.class_name}_new")]
+        internal static extern global::System.IntPtr ctor();
 #end if
+

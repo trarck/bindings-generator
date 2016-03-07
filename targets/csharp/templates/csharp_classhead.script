@@ -14,9 +14,16 @@ namespace ${generator.target_ns}
 public class ${current_class.target_class_name} : IDisposable
 {
     public global::System.IntPtr __Instance { get; protected set; }
-    
+
     public void Dispose()
     {
         Internal.Destroy(__Instance);
     }
+
+#if not $current_class.methods.has_key('constructor')
+    public void ${current_class.target_class_name}()
+    {
+       __Instance=Internal.ctor();
+    }
+#end if
 

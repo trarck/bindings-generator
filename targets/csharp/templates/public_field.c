@@ -5,7 +5,7 @@ void csharp_${generator.prefix}_${class_name}_${name}_set(${class_name}* self,${
 }
 
 ## ===== field get function
-${ntype} csharp_${generator.prefix}_${class_name}_${name}_set(${class_name}* self)
+${ntype} csharp_${generator.prefix}_${class_name}_${name}_get(${class_name}* self)
 {
     return self->${name};
 }

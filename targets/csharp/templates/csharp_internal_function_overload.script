@@ -1,23 +1,15 @@
 #set $idx = 0
 #for func in $implementations
 ## ===== function name
+#if $func.is_constructor
         [DllImport("${generator.name}", CallingConvention =CallingConvention.Cdecl,
-            EntryPoint="csharp_${generator.prefix}_${class_name}_#slurp
-## ===== check constructor function name
-#if $func.is_constructor
-new#slurp
+            EntryPoint="csharp_${generator.prefix}_${class_name}_new_${idx}")]
+        internal static extern global::System.IntPtr ctor(#slurp
 #else
-${func.func_name}#slurp
+        [DllImport("${generator.name}", CallingConvention =CallingConvention.Cdecl,
+            EntryPoint="csharp_${generator.prefix}_${class_name}_${func.func_name}_${idx}")]
+        internal static extern $generator.csharp_typename_from_native($func.ret_type) ${func.func_name}(#slurp
 #end if
-_${idx}")]
-        internal static extern $generator.csharp_typename_from_native($func.ret_type) #slurp
-## ===== check constructor function name
-#if $func.is_constructor
-ctor#slurp
-#else
-${func.func_name}#slurp
-#end if
-(#slurp
 ## ===== self point in 
 #if not $func.static and not $func.is_constructor
 global::System.IntPtr instance#slurp
