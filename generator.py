@@ -509,6 +509,7 @@ class NativeFunction(object):
         self.arguments = []
         self.argumtntTips = []
         self.static = cursor.kind == cindex.CursorKind.CXX_METHOD and cursor.is_static_method()
+        self.is_virtual = cursor.kind == cindex.CursorKind.CXX_METHOD and cursor.is_virtual_method()
         self.implementations = []
         self.is_overloaded = False
         self.is_constructor = False
@@ -578,7 +579,7 @@ class NativeFunction(object):
         gen = current_class.generator if current_class else generator
         config = gen.config
         
-        print("Gen fun "+ self.func_name)
+        print("Gen fun "+ self.func_name+","+str(self.is_virtual))
 
         if not is_ctor:
                 tpl = Template(file=os.path.join(gen.target, "templates", "function.h"),
