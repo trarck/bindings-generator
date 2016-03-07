@@ -11,7 +11,12 @@ using System.Runtime.InteropServices;
 namespace ${generator.target_ns}
 {
 #end if
-public class ${current_class.target_class_name} : IDisposable
+public class ${current_class.target_class_name} : #slurp
+#if len($current_class.parents)>0
+${current_class.parents[0].target_class_name}
+#else
+IDisposable
+#end if
 {
     public global::System.IntPtr __Instance { get; protected set; }
 
