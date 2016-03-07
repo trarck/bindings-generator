@@ -2,6 +2,5 @@
 ${current_class.csharp_internal}
 }
 #if $generator.target_ns
-namespace ${generator.target_ns}
 }
 #end if
