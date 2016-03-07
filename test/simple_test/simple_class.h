@@ -19,6 +19,9 @@ protected:
 	char* m_anotherMoreComplexField;
 
 public:
+    int aInt;
+    static float bFloat;
+
     static const uint32_t OBJECT_TYPE = 0x777;
     virtual uint32_t getObjectType() {
         return SimpleNativeClass::OBJECT_TYPE;
