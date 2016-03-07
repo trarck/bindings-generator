@@ -579,7 +579,7 @@ class NativeFunction(object):
         gen = current_class.generator if current_class else generator
         config = gen.config
         
-        print("Gen fun "+ self.func_name+","+str(self.is_virtual))
+        #print("Gen fun "+ self.func_name+","+str(self.is_virtual))
 
         if not is_ctor:
                 tpl = Template(file=os.path.join(gen.target, "templates", "function.h"),
@@ -695,7 +695,7 @@ class NativeOverloadedFunction(object):
         gen = current_class.generator
         config = gen.config
         static = self.implementations[0].static
-        print("Gen overide "+ self.func_name)
+        #print("Gen overide "+ self.func_name)
            
         if not is_ctor:
             if gen.script_type == "csharp":
