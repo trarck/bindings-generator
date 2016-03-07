@@ -475,6 +475,20 @@ class NativeField(object):
                        searchList=[current_class, self])
         gen.impl_file.write(str(tpl))
 
+        if gen.script_type == "csharp":
+                csharp_internal_public_field_script = Template(file=os.path.join(gen.target,
+                                                        "templates",
+                                                        "csharp_internal_public_field.script"),
+                                      searchList=[current_class, self])
+                current_class.csharp_internal+=str(csharp_internal_public_field_script)
+                
+                csharp_public_field_script = Template(file=os.path.join(gen.target,
+                                        "templates",
+                                        "csharp_public_field.script"),
+                      searchList=[current_class, self])
+                current_class.csharp_file.write(str(csharp_public_field_script))
+                
+
 # return True if found default argument.
 def iterate_param_node(param_node, depth=1):
     for node in param_node.get_children():

@@ -1,0 +1,14 @@
+## ===== field name
+    public $generator.csharp_typename_from_native($ntype) ${name}
+    {
+        get
+        {
+            return Internal.Get${name[0:1].upper()}${name[1:]}(__Instance);
+        }
+
+        set
+        {
+            Internal.Set${name[0:1].upper()}${name[1:]}(__Instance,value);
+        }
+    }
+

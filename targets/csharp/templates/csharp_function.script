@@ -1,5 +1,5 @@
 ## ===== function name
-    $generator.csharp_typename_from_native($ret_type) ${func_name}(#slurp
+    public $generator.csharp_typename_from_native($ret_type) ${func_name}(#slurp
 ## ===== parameters 
 #if $min_args > 0
     #set $length = len($arguments)

@@ -1,7 +1,7 @@
 #set $idx = 0
 #for func in $implementations
 ## ===== function name
-    $generator.csharp_typename_from_native($func.ret_type) ${func.func_name}(#slurp
+    public $generator.csharp_typename_from_native($func.ret_type) ${func.func_name}(#slurp
 ## ===== parameters 
     #if $func.min_args > 0
         #set $length = len($func.arguments)
