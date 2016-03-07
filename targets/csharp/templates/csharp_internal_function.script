@@ -1,7 +1,21 @@
 ## ===== function name
         [DllImport("${generator.name}", CallingConvention =CallingConvention.Cdecl,
-            EntryPoint="csharp_${generator.prefix}_${class_name}_${func_name}")]
-        internal static extern $generator.csharp_typename_from_native($ret_type) ${func_name}(#slurp
+            EntryPoint="csharp_${generator.prefix}_${class_name}_#slurp
+## ===== check constructor function name
+#if $is_constructor
+new#slurp
+#else
+${func_name}#slurp
+#end if
+")]
+        internal static extern $generator.csharp_typename_from_native($ret_type) #slurp
+## ===== check constructor function name
+#if $is_constructor
+ctor#slurp
+#else
+${func_name}#slurp
+#end if
+(#slurp
 ## ===== self point in 
 #if not $static and not $is_constructor
 global::System.IntPtr instance#slurp

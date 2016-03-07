@@ -21,7 +21,7 @@ $generator.csharp_typename_from_native($arg) $func.argumtntTips[$index]#slurp
         return Internal.${func.func_name}#slurp
     #else
         #if $func.is_constructor
-        __Instance=Internal.ctor_${idx}(#slurp
+        __Instance=Internal.ctor(#slurp
         #else
         Internal.${func.func_name}(#slurp
         #end if

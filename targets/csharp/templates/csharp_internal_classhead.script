@@ -1,2 +1,6 @@
     public class Internal
     {
+#if not $current_class.methods.has_key('constructor')
+    
+    
+#end if
