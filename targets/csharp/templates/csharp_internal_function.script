@@ -1,10 +1,10 @@
 ## ===== function name
 #if $is_constructor
-        [DllImport("${generator.name}", CallingConvention =CallingConvention.Cdecl,
+        [DllImport(NativeLib, CallingConvention =CallingConvention.Cdecl,
             EntryPoint="csharp_${generator.prefix}_${class_name}_new")]
         internal static extern global::System.IntPtr ctor(#slurp
 #else
-        [DllImport("${generator.name}", CallingConvention =CallingConvention.Cdecl,
+        [DllImport(NativeLib, CallingConvention =CallingConvention.Cdecl,
             EntryPoint="csharp_${generator.prefix}_${class_name}_${func_name}")]
         internal static extern $generator.csharp_typename_from_native($ret_type) ${func_name}(#slurp
 #end if

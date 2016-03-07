@@ -1,9 +1,9 @@
 ## ===== set name
-        [DllImport("${generator.name}", CallingConvention =CallingConvention.Cdecl,
+        [DllImport(NativeLib, CallingConvention =CallingConvention.Cdecl,
             EntryPoint="csharp_${generator.prefix}_${class_name}_${name}_set")]
         internal static extern void Set${name[0:1].upper()}${name[1:]}(global::System.IntPtr instance,$generator.csharp_typename_from_native($ntype) val);
 
-        [DllImport("${generator.name}", CallingConvention =CallingConvention.Cdecl,
+        [DllImport(NativeLib, CallingConvention =CallingConvention.Cdecl,
             EntryPoint="csharp_${generator.prefix}_${class_name}_${name}_get")]
         internal static extern $generator.csharp_typename_from_native($ntype) Get${name[0:1].upper()}${name[1:]} (global::System.IntPtr instance);
 
