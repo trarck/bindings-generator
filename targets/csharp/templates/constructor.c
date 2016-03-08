@@ -1,5 +1,5 @@
 ## ===== function name
-${class_name}* csharp_${generator.prefix}_${class_name}_new(#slurp
+${namespaced_class_name}* csharp_${generator.prefix}_${class_name}_new(#slurp
 ## ===== parameters 
 #if $min_args > 0
     #set $length = len($arguments)
@@ -15,7 +15,7 @@ $arg $argumtntTips[$index]#slurp
 #end if
 ){
 ## ===== call function
-    return new ${class_name}(#slurp
+    return new ${namespaced_class_name}(#slurp
 #if $min_args > 0
     #set $index = 0
     #for $arg in $arguments

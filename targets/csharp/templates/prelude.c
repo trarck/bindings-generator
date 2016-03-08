@@ -5,12 +5,12 @@
 ${current_class.methods.constructor.generate_code($current_class)}
 #else
 ##=======default constructor
-${current_class.class_name}* csharp_${generator.prefix}_${current_class.class_name}_new()
+${current_class.namespaced_class_name}* csharp_${generator.prefix}_${current_class.class_name}_new()
 {
-    return new ${current_class.class_name}();
+    return new ${current_class.namespaced_class_name}();
 }
 #end if
-void csharp_${generator.prefix}_${current_class.class_name}_delete(${current_class.class_name} *self)
+void csharp_${generator.prefix}_${current_class.class_name}_delete(${current_class.namespaced_class_name} *self)
 {
     if(self!=NULL){
         delete self;

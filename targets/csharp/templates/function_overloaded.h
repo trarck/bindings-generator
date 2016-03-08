@@ -1,13 +1,13 @@
 #set $idx = 0
 #for func in $implementations
     #if $is_constructor
-${generator.export_symbol_define}${func.func_name}* csharp_${generator.prefix}_${class_name}_new_${idx}(#slurp
+${generator.export_symbol_define}${namespaced_class_name}* csharp_${generator.prefix}_${class_name}_new_${idx}(#slurp
     #else
 ${generator.export_symbol_define}${func.ret_type} csharp_${generator.prefix}_${class_name}_${func.func_name}_${idx}(#slurp
     #end if
 ## ===== self point in 
     #if not $func.static and not $func.is_constructor
-${class_name}* self#slurp
+${namespaced_class_name}* self#slurp
         #if $func.min_args > 0
 ,#slurp
         #end if

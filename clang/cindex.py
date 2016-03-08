@@ -1164,7 +1164,7 @@ CursorKind.ANNOTATE_ATTR = CursorKind(406)
 CursorKind.ASM_LABEL_ATTR = CursorKind(407)
 CursorKind.PACKED_ATTR    = CursorKind(408)
 CursorKind.PURE_ATTR = CursorKind(409)
-
+CursorKind.CONST_ATTR = CursorKind(410)
 ###
 # Preprocessing
 CursorKind.PREPROCESSING_DIRECTIVE = CursorKind(500)

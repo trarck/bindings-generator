@@ -1,12 +1,12 @@
 ## ===== function name
 #if $is_constructor
-${generator.export_symbol_define}${class_name}* csharp_${generator.prefix}_${class_name}_new(#slurp
+${generator.export_symbol_define}${namespaced_class_name}* csharp_${generator.prefix}_${class_name}_new(#slurp
 #else
 ${generator.export_symbol_define}${ret_type} csharp_${generator.prefix}_${class_name}_${func_name}(#slurp
 #end if
 ## ===== self point in 
 #if not $static and not $is_constructor
-${class_name}* self#slurp
+${namespaced_class_name}* self#slurp
     #if $min_args > 0
 ,#slurp
     #end if

@@ -1,5 +1,5 @@
 ## ===== function name
-${ret_type} csharp_${generator.prefix}_${class_name}_${func_name}(${class_name}* self#slurp
+${ret_type} csharp_${generator.prefix}_${class_name}_${func_name}(${namespaced_class_name}* self#slurp
 ## ===== parameters 
 #if $min_args > 0
 ,#slurp

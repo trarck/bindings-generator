@@ -1,7 +1,7 @@
 #set $idx = 0
 #for func in $implementations
 ## ===== function name
-${func.ret_type} csharp_${generator.prefix}_${class_name}_${func.func_name}_${idx}(${class_name}* self#slurp
+${func.ret_type} csharp_${generator.prefix}_${class_name}_${func.func_name}_${idx}(${namespaced_class_name}* self#slurp
 ## ===== parameters 
     #if $func.min_args > 0
 ,#slurp

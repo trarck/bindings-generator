@@ -9,14 +9,6 @@ $macro_judgement
 \#include "${header}"
 #end for
 #end if 
-#for header in $headers
-    #set include_header = os.path.basename(header)
-    #if $replace_headers.has_key(include_header)
-\#include "${replace_headers[include_header]}"
-    #else
-\#include "${include_header}"
-    #end if
-#end for
 
 \#ifdef __cplusplus
 extern "C" {
