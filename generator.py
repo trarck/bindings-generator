@@ -1549,8 +1549,13 @@ class Generator(object):
             return "func"
         else:
             return namespace_class_name
-    def ucfirst(self,str):
-        return str[0:1].upper()+str[1:]
+    def script_function_name_format(self,fun_name):
+        if self.config['definitions'].has_key('function_name_format'):
+            tpl = Template(self.config['definitions']['function_name_format'],
+                                    searchList=[{'name':fun_name}])
+            return str(tpl)
+        else:
+            return fun_name
 def main():
     from optparse import OptionParser
 

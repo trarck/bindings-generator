@@ -1,8 +1,8 @@
 ## ===== function name
 #if $is_constructor
-    public ${generator.ucfirst($func_name)}(#slurp
+    public ${generator.script_function_name_format($func_name)}(#slurp
 #else
-    public $generator.csharp_typename_from_native($ret_type) ${generator.ucfirst($func_name)}(#slurp
+    public $generator.csharp_typename_from_native($ret_type) ${generator.script_function_name_format($func_name)}(#slurp
 #end if
 ## ===== parameters 
 #if $min_args > 0

@@ -2,9 +2,9 @@
 #for func in $implementations
 ## ===== function name
 #if $func.is_constructor
-    public ${generator.ucfirst(func.func_name)}(#slurp
+    public ${generator.script_function_name_format(func.func_name)}(#slurp
 #else
-    public $generator.csharp_typename_from_native($func.ret_type) ${generator.ucfirst(func.func_name)}(#slurp
+    public $generator.csharp_typename_from_native($func.ret_type) ${generator.script_function_name_format(func.func_name)}(#slurp
 #end if
 ## ===== parameters 
     #if $func.min_args > 0
