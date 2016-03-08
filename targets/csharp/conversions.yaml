@@ -8,6 +8,7 @@ definitions:
   public_field: "js_${generator.prefix}_${class_name}"
   function_name_format: "${name[0:1].upper()}${name[1:]}"
   cpp_dll: "YH_UNITYPLUGIN_API"
+  original_parameter: True
 conversions:
   # some times you want to use a special native type when converting from spidermonkey to native
   # the most common case would be from JS-boolean to bool. Using "bool" will fail here since we

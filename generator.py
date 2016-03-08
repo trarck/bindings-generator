@@ -642,6 +642,13 @@ class NativeFunction(object):
                                                         "csharp_function.script"),
                                       searchList=[current_class, self])
                 current_class.csharp_file.write(str(csharp_function_script))
+                #gen original class parameter
+                if config['definitions'].has_key('original_parameter'):
+                    csharp_function_origin_script = Template(file=os.path.join(gen.target,
+                                                        "templates",
+                                                        "csharp_function_origin.script"),
+                                      searchList=[current_class, self])
+                    current_class.csharp_file.write(str(csharp_function_origin_script))
 
 class NativeOverloadedFunction(object):
     def __init__(self, func_array):
@@ -764,7 +771,13 @@ class NativeOverloadedFunction(object):
                                                         "csharp_function_overload.script"),
                                       searchList=[current_class, self])
                 current_class.csharp_file.write(str(csharp_function_overload_script))
-
+                #gen original class parameter
+                if config['definitions'].has_key('original_parameter'):
+                    csharp_function_origin_overload_script = Template(file=os.path.join(gen.target,
+                                                        "templates",
+                                                        "csharp_function_origin_overload.script"),
+                                      searchList=[current_class, self])
+                    current_class.csharp_file.write(str(csharp_function_origin_overload_script))
 
 class NativeClass(object):
     def __init__(self, cursor, generator):
@@ -1553,6 +1566,7 @@ class Generator(object):
             return "func"
         else:
             return namespace_class_name
+    
     def script_function_name_format(self,fun_name):
         if self.config['definitions'].has_key('function_name_format'):
             tpl = Template(self.config['definitions']['function_name_format'],
@@ -1566,6 +1580,16 @@ class Generator(object):
         #add a space after define
         return (self.config['definitions']['cpp_dll']+" ") if self.config['definitions'].has_key('cpp_dll') else ""
             
+    def have_class(self,class_name):
+        return self.generated_classes.has_key(class_name)
+    
+    def get_type_class_name(self,native_type):
+        return native_type.get_whole_name(self).replace("*","").replace("&","").replace("const ","")
+
+    def type_is_class(self,native_type):
+        class_name=native_type.get_whole_name(self).replace("*","").replace("&","").replace("const ","")
+        return self.have_class(class_name)
+
 def main():
     from optparse import OptionParser
 

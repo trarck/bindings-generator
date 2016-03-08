@@ -7,11 +7,11 @@ ${generator.export_symbol_define}${func.ret_type} csharp_${generator.prefix}_${c
     #end if
 ## ===== self point in 
     #if not $func.static and not $func.is_constructor
-${class_name}* self,#slurp
-    #if $func.min_args > 0
+${class_name}* self#slurp
+        #if $func.min_args > 0
 ,#slurp
+        #end if
     #end if
-#end if
 ## ===== parameters 
     #if $func.min_args > 0
         #set $length = len($func.arguments)
