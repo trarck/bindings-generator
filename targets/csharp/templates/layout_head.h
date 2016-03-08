@@ -18,3 +18,6 @@ $macro_judgement
     #end if
 #end for
 
+\#ifdef __cplusplus
+extern "C" {
+\#endif    

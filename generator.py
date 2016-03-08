@@ -1087,6 +1087,7 @@ class Generator(object):
         self.hpp_headers = opts['hpp_headers']
         self.cpp_headers = opts['cpp_headers']
         self.win32_clang_flags = opts['win32_clang_flags']
+        self.user_config=opts['user_config']
 
         extend_clang_args = []
 
@@ -1259,7 +1260,10 @@ class Generator(object):
         # must read the yaml file first
         stream = file(os.path.join(self.target, "conversions.yaml"), "r")
         data = yaml.load(stream)
-        self.config = data
+        #merge user_config
+
+        self.config = dict(data,**self.user_config) if self.user_config else data
+
         implfilepath = os.path.join(self.outdir, self.out_file + ".cpp")
         headfilepath = os.path.join(self.outdir, self.out_file + ".hpp")
 
@@ -1556,6 +1560,12 @@ class Generator(object):
             return str(tpl)
         else:
             return fun_name
+    
+    #cpp dll export symbol
+    def export_symbol_define(self):
+        #add a space after define
+        return (self.config['definitions']['cpp_dll']+" ") if self.config['definitions'].has_key('cpp_dll') else ""
+            
 def main():
     from optparse import OptionParser
 
@@ -1568,7 +1578,6 @@ def main():
                         help="specifies the output directory for generated C++ code")
     parser.add_option("-n", action="store", type="string", dest="out_file",
                         help="specifcies the name of the output file, defaults to the prefix in the .ini file")
-
     (opts, args) = parser.parse_args()
 
     # script directory
@@ -1618,6 +1627,10 @@ def main():
         outdir = os.path.join(workingdir, "gen")
     if not os.path.exists(outdir):
         os.makedirs(outdir)
+    
+    if userconfig.has_option('DEFAULT', 'generator_config'):
+        stream = file(userconfig.get('DEFAULT', 'generator_config'), "r")
+        generator_user_config = yaml.load(stream)
 
     for t in targets:
         # Fix for hidden '.svn', '.cvs' and '.git' etc. folders - these must be ignored or otherwise they will be interpreted as a target.
@@ -1653,7 +1666,8 @@ def main():
                 'macro_judgement': config.get(s, 'macro_judgement') if config.has_option(s, 'macro_judgement') else None,
                 'hpp_headers': config.get(s, 'hpp_headers', 0, dict(userconfig.items('DEFAULT'))).split(' ') if config.has_option(s, 'hpp_headers') else None,
                 'cpp_headers': config.get(s, 'cpp_headers', 0, dict(userconfig.items('DEFAULT'))).split(' ') if config.has_option(s, 'cpp_headers') else None,
-                'win32_clang_flags': (config.get(s, 'win32_clang_flags', 0, dict(userconfig.items('DEFAULT'))) or "").split(" ") if config.has_option(s, 'win32_clang_flags') else None
+                'win32_clang_flags': (config.get(s, 'win32_clang_flags', 0, dict(userconfig.items('DEFAULT'))) or "").split(" ") if config.has_option(s, 'win32_clang_flags') else None,
+                'user_config':generator_user_config if userconfig.has_option('DEFAULT', 'generator_config') else None
                 }
             generator = Generator(gen_opts)
             generator.generate_code()

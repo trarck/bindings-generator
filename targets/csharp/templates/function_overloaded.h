@@ -1,9 +1,9 @@
 #set $idx = 0
 #for func in $implementations
     #if $is_constructor
-${func.func_name}* csharp_${generator.prefix}_${class_name}_new_${idx}(#slurp
+${generator.export_symbol_define}${func.func_name}* csharp_${generator.prefix}_${class_name}_new_${idx}(#slurp
     #else
-${func.ret_type} csharp_${generator.prefix}_${class_name}_${func.func_name}_${idx}(#slurp
+${generator.export_symbol_define}${func.ret_type} csharp_${generator.prefix}_${class_name}_${func.func_name}_${idx}(#slurp
     #end if
 ## ===== self point in 
     #if not $func.static and not $func.is_constructor
