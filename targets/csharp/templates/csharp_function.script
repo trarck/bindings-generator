@@ -1,8 +1,8 @@
 ## ===== function name
 #if $is_constructor
-    public ${func_name}(#slurp
+    public ${generator.ucfirst($func_name)}(#slurp
 #else
-    public $generator.csharp_typename_from_native($ret_type) ${func_name}(#slurp
+    public $generator.csharp_typename_from_native($ret_type) ${generator.ucfirst($func_name)}(#slurp
 #end if
 ## ===== parameters 
 #if $min_args > 0
@@ -18,7 +18,7 @@ $generator.csharp_typename_from_native($arg) $argumtntTips[$index]#slurp
     #end for
 #end if
 )
-{
+    {
 ## ===== call function
 #if str($ret_type) != "void"
         return Internal.${func_name}(#slurp

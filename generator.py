@@ -146,7 +146,6 @@ def get_namespace_name(declaration_cursor):
 
     return declaration_cursor.displayname
 
-
 class NativeType(object):
     def __init__(self):
         self.is_object = False
@@ -1550,6 +1549,8 @@ class Generator(object):
             return "func"
         else:
             return namespace_class_name
+    def ucfirst(self,str):
+        return str[0:1].upper()+str[1:]
 def main():
     from optparse import OptionParser
 
