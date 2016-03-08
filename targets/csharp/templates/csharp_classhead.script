@@ -22,9 +22,20 @@ IDisposable
 
     public void Dispose()
     {
-        Internal.Destroy(__Instance);
+        Dispose(true);
     }
 
+    public void Dispose(bool disposing)
+    {
+        Internal.Destroy(__Instance);
+        if(disposing)
+            GC.SuppressFinalize(this); 
+    }
+    
+    ~${current_class.target_class_name}()
+    {
+       Dispose(false);
+    }
 #if not $current_class.methods.has_key('constructor')
     public ${current_class.target_class_name}()
     {
