@@ -1,7 +1,11 @@
 #set $idx = 0
 #for func in $implementations
 ## ===== function name
+#if $func.is_constructor
+    public ${func.func_name}(#slurp
+#else
     public $generator.csharp_typename_from_native($func.ret_type) ${func.func_name}(#slurp
+#end if
 ## ===== parameters 
     #if $func.min_args > 0
         #set $length = len($func.arguments)
@@ -15,7 +19,8 @@ $generator.csharp_typename_from_native($arg) $func.argumtntTips[$index]#slurp
             #set $index = $index + 1
         #end for
     #end if
-){
+)
+{
 ## ===== call function
     #if str($func.ret_type) != "void"
         return Internal.${func.func_name}#slurp

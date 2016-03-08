@@ -26,7 +26,7 @@ IDisposable
     }
 
 #if not $current_class.methods.has_key('constructor')
-    public void ${current_class.target_class_name}()
+    public ${current_class.target_class_name}()
     {
        __Instance=Internal.ctor();
     }
