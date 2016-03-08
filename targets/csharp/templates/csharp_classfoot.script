@@ -1,6 +1,6 @@
 #set generator = $current_class.generator
 ${current_class.csharp_internal}
 }
-#if $generator.target_ns
+#if $current_class.namespace_name or $generator.target_ns
 }
 #end if

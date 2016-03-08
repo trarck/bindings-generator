@@ -7,7 +7,10 @@ using System.Runtime.InteropServices;
 /**
  * @class ${current_class.class_name}
  */
-#if $generator.target_ns
+#if $current_class.namespace_name
+namespace ${current_class.namespace_name.replace("::",".")}
+{
+#elif $generator.target_ns
 namespace ${generator.target_ns}
 {
 #end if

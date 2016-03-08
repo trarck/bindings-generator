@@ -811,6 +811,9 @@ class NativeClass(object):
     @property
     def underlined_class_name(self):
         return self.namespaced_class_name.replace("::", "_")
+    
+    def dot_class_name(self):
+        return self.namespaced_class_name.replace("::", ".")
 
     def parse(self):
         '''
@@ -866,7 +869,7 @@ class NativeClass(object):
             self.is_ref_class = self._is_ref_class()
 
         config = self.generator.config
-
+        print("cc:"+self.namespaced_class_name)
         if self.generator.script_type == "csharp":
             csharpfuncfilepath = os.path.join(self.generator.outdir + "/csharp", self.class_name + ".cs")
             self.csharp_file = open(csharpfuncfilepath, "w+")
@@ -1383,7 +1386,7 @@ class Generator(object):
                 raise Exception("The namespace (%s) conversion wasn't set in 'ns_map' section of the conversions.yaml" % namespace_class_name)
         else:
             return namespace_class_name.replace("*","").replace("const ", "")
-
+    
     def is_cocos_class(self, namespace_class_name):
         script_ns_dict = self.config['conversions']['ns_map']
         for (k, v) in script_ns_dict.items():
