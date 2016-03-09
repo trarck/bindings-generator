@@ -1,7 +1,7 @@
 #set $idx = 0
 #for func in $implementations
 ## ===== function name
-${class_name}* csharp_${generator.prefix}_${class_name}_new_${idx}(#slurp
+${namespaced_class_name}* csharp_${generator.prefix}_${class_name}_new_${idx}(#slurp
 ## ===== parameters 
     #if $func.min_args > 0
         #set $length = len($func.arguments)
@@ -17,7 +17,7 @@ $arg $func.argumtntTips[$index]#slurp
     #end if
 ){
 ## ===== call function
-    return new ${class_name}(#slurp
+    return new ${namespaced_class_name}(#slurp
     #if $func.min_args > 0
         #set $index = 0
         #for $arg in $func.arguments
