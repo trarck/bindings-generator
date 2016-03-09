@@ -7,16 +7,17 @@ using System.Runtime.InteropServices;
 /**
  * @class ${current_class.class_name}
  */
-#if $current_class.namespace_name
-namespace ${current_class.namespace_name.replace("::",".")}
-{
-#elif $generator.target_ns
-namespace ${generator.target_ns}
+#if $current_class.namespace_name or $generator.target_ns
+#set $script_namespace=$generator.script_namespace_name_from_native($current_class.namespace_name).replace("::",".")
+#if $script_namespace[-1:]=="."
+#set $script_namespace= $script_namespace[0:-1]
+#end if
+namespace ${script_namespace}
 {
 #end if
 public class ${current_class.target_class_name} : #slurp
 #if len($current_class.parents)>0
-${current_class.parents[0].target_class_name}
+${generator.scriptname_from_native(current_class.parents[0].namespaced_class_name,current_class.parents[0].namespace_name).replace("::",".")}
 #else
 IDisposable
 #end if

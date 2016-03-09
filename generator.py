@@ -144,7 +144,22 @@ def get_namespace_name(declaration_cursor):
     if len(ns) > 0:
         return ns + "::"
 
-    return declaration_cursor.displayname
+    #return declaration_cursor.displayname
+    return ""
+
+def deep_update(source, destination):
+    """
+    Recursively update a dict.
+    Subdict's won't be overwritten but also updated.
+    """
+    for key, value in source.iteritems(): 
+        if key not in destination:
+            destination[key] = value
+        elif isinstance(value, dict):
+            if not destination[key]:
+                destination[key]={}
+            deep_update(value, destination[key]) 
+    return destination
 
 class NativeType(object):
     def __init__(self):
@@ -773,6 +788,7 @@ class NativeOverloadedFunction(object):
                 current_class.csharp_file.write(str(csharp_function_overload_script))
                 #gen original class parameter
                 if config['definitions'].has_key('original_parameter'):
+                    print("@@@@Gen origin")
                     csharp_function_origin_overload_script = Template(file=os.path.join(gen.target,
                                                         "templates",
                                                         "csharp_function_origin_overload.script"),
@@ -869,7 +885,7 @@ class NativeClass(object):
             self.is_ref_class = self._is_ref_class()
 
         config = self.generator.config
-        print("cc:"+self.namespaced_class_name)
+        print("cc:"+self.namespaced_class_name+","+self.namespace_name)
         if self.generator.script_type == "csharp":
             csharpfuncfilepath = os.path.join(self.generator.outdir + "/csharp", self.class_name + ".cs")
             self.csharp_file = open(csharpfuncfilepath, "w+")
@@ -1277,8 +1293,11 @@ class Generator(object):
         stream = file(os.path.join(self.target, "conversions.yaml"), "r")
         data = yaml.load(stream)
         #merge user_config
+        
+        if self.user_config:
+            deep_update(self.user_config,data)
 
-        self.config = dict(data,**self.user_config) if self.user_config else data
+        self.config = data
 
         implfilepath = os.path.join(self.outdir, self.out_file + ".cpp")
         headfilepath = os.path.join(self.outdir, self.out_file + ".hpp")
@@ -1386,6 +1405,22 @@ class Generator(object):
                 raise Exception("The namespace (%s) conversion wasn't set in 'ns_map' section of the conversions.yaml" % namespace_class_name)
         else:
             return namespace_class_name.replace("*","").replace("const ", "")
+    
+    def script_namespace_name_from_native(self, namespace_name):
+        if not namespace_name:
+            return self.target_ns
+        
+        if self.config['conversions']['ns_map']:
+            script_ns_dict = self.config['conversions']['ns_map']
+            for (k, v) in script_ns_dict.items():
+                if k == namespace_name:
+                    namespace_name=v
+                    break;
+        
+        if namespace_name.find(self.target_ns)==0:
+            return namespace_name
+        else:
+            return self.target_ns+"::"+namespace_name
     
     def is_cocos_class(self, namespace_class_name):
         script_ns_dict = self.config['conversions']['ns_map']
@@ -1586,12 +1621,12 @@ class Generator(object):
     def have_class(self,class_name):
         return self.generated_classes.has_key(class_name)
     
-    def get_type_class_name(self,native_type):
-        return native_type.get_whole_name(self).replace("*","").replace("&","").replace("const ","")
-
     def type_is_class(self,native_type):
-        class_name=native_type.get_whole_name(self).replace("*","").replace("&","").replace("const ","")
+        class_name=native_type.name.replace("*","").replace("&","").replace("const ","")
         return self.have_class(class_name)
+
+    def script_type_class_name(self,native_type):
+        return self.scriptname_from_native(native_type.namespaced_name,native_type.namespace_name)
 
 def main():
     from optparse import OptionParser
