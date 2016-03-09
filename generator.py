@@ -153,12 +153,13 @@ def deep_update(source, destination):
     Subdict's won't be overwritten but also updated.
     """
     for key, value in source.iteritems(): 
-        if key not in destination:
-            destination[key] = value
-        elif isinstance(value, dict):
+        if isinstance(value, dict):
             if not destination[key]:
                 destination[key]={}
-            deep_update(value, destination[key]) 
+            deep_update(value, destination[key])
+        else:
+            destination[key] = value
+
     return destination
 
 class NativeType(object):
@@ -1298,7 +1299,7 @@ class Generator(object):
             deep_update(self.user_config,data)
 
         self.config = data
-
+        print(self.config['definitions']['internal_native_lib'])
         implfilepath = os.path.join(self.outdir, self.out_file + ".cpp")
         headfilepath = os.path.join(self.outdir, self.out_file + ".hpp")
 
@@ -1626,8 +1627,18 @@ class Generator(object):
         return self.have_class(class_name)
 
     def script_type_class_name(self,native_type):
-        return self.scriptname_from_native(native_type.namespaced_name,native_type.namespace_name)
-
+        script_ns_dict = self.config['conversions']['ns_map']
+        for (k, v) in script_ns_dict.items():
+            if k == native_type.namespace_name:
+                return native_type.namespaced_name.replace("*","").replace("const ", "").replace(k, v)
+        return native_type.namespaced_name.replace("*","").replace("const ", "")
+    
+    def csharp_internal_native_lib(self):
+        if self.config['definitions'].has_key('internal_native_lib'):
+            tpl = Template(self.config['definitions']['internal_native_lib'],
+                                    searchList=[self])
+            return str(tpl)
+        return ""
 def main():
     from optparse import OptionParser
 

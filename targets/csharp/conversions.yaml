@@ -9,6 +9,8 @@ definitions:
   function_name_format: "${name[0:1].upper()}${name[1:]}"
   cpp_dll: "YH_UNITYPLUGIN_API"
   original_parameter: True
+  #internal_native_lib: "\\#if UNITY_IPHONE || UNITY_XBOX360\n            const string NativeLib = \"__Internal\";\n        \\#else\n            const string NativeLib = \"${name}\";\n        \\#endif"
+  internal_native_lib: "const string NativeLib = \"${name}\";"
 conversions:
   # some times you want to use a special native type when converting from spidermonkey to native
   # the most common case would be from JS-boolean to bool. Using "bool" will fail here since we
