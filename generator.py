@@ -789,7 +789,6 @@ class NativeOverloadedFunction(object):
                 current_class.csharp_file.write(str(csharp_function_overload_script))
                 #gen original class parameter
                 if config['definitions'].has_key('original_parameter'):
-                    print("@@@@Gen origin")
                     csharp_function_origin_overload_script = Template(file=os.path.join(gen.target,
                                                         "templates",
                                                         "csharp_function_origin_overload.script"),
@@ -886,7 +885,7 @@ class NativeClass(object):
             self.is_ref_class = self._is_ref_class()
 
         config = self.generator.config
-        print("cc:"+self.namespaced_class_name+","+self.namespace_name)
+
         if self.generator.script_type == "csharp":
             csharpfuncfilepath = os.path.join(self.generator.outdir + "/csharp", self.class_name + ".cs")
             self.csharp_file = open(csharpfuncfilepath, "w+")
