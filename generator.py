@@ -887,7 +887,18 @@ class NativeClass(object):
         config = self.generator.config
 
         if self.generator.script_type == "csharp":
-            csharpfuncfilepath = os.path.join(self.generator.outdir + "/csharp", self.class_name + ".cs")
+            csharpfuncfilepath = ""
+            if config['definitions'].has_key('use_namespace_path') and config['definitions']['use_namespace_path']:
+                csharpfuncfilepath = os.path.join(
+                                    self.generator.outdir,
+                                    "csharp",
+                                    os.path.normpath(self.generator.script_namespace_name_from_native(self.namespace_name).replace("::","/").replace(".","/")))
+                if not os.path.exists(csharpfuncfilepath):
+                    os.makedirs(csharpfuncfilepath)
+                csharpfuncfilepath=os.path.join(csharpfuncfilepath,self.class_name + ".cs")
+            else:
+                csharpfuncfilepath = os.path.join(self.generator.outdir,"csharp",self.class_name + ".cs")
+            
             self.csharp_file = open(csharpfuncfilepath, "w+")
             csharp_classhead_script  = Template(file=os.path.join(self.generator.target,
                                                          "templates",

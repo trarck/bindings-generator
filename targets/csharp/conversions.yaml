@@ -11,6 +11,7 @@ definitions:
   original_parameter: True
   #internal_native_lib: "\\#if UNITY_IPHONE || UNITY_XBOX360\n            const string NativeLib = \"__Internal\";\n        \\#else\n            const string NativeLib = \"${name}\";\n        \\#endif"
   internal_native_lib: "const string NativeLib = \"${name}\";"
+  use_namespace_path: True
 conversions:
   # some times you want to use a special native type when converting from spidermonkey to native
   # the most common case would be from JS-boolean to bool. Using "bool" will fail here since we
