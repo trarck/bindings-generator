@@ -594,6 +594,7 @@ class NativeFunction(object):
         gen = current_class.generator if current_class else generator
         config = gen.config
         
+        #do not create virtual in c#, c++ already virtual
         #print("Gen fun "+ self.func_name+","+str(self.is_virtual))
 
         if not is_ctor:
@@ -885,7 +886,7 @@ class NativeClass(object):
             self.is_ref_class = self._is_ref_class()
 
         config = self.generator.config
-
+        #print("Gen "+self.class_name+" is_abstract="+str(self.is_abstract))
         if self.generator.script_type == "csharp":
             csharpfuncfilepath = ""
             if config['definitions'].has_key('use_namespace_path') and config['definitions']['use_namespace_path']:
@@ -900,6 +901,7 @@ class NativeClass(object):
                 csharpfuncfilepath = os.path.join(self.generator.outdir,"csharp",self.class_name + ".cs")
             
             self.csharp_file = open(csharpfuncfilepath, "w+")
+            
             csharp_classhead_script  = Template(file=os.path.join(self.generator.target,
                                                          "templates",
                                                          "csharp_classhead.script"),
