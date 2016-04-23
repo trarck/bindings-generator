@@ -7,7 +7,7 @@ setlocal
 :: You should modify PYTHON_ROOT and NDK_ROOT to work under your environment.
 :: or just uncomment the follow 2 lines and set them.
 
-:: set PYTHON_ROOT=C:/Python27
+set PYTHON_ROOT=C:/Python27
 :: set NDK_ROOT=G:/android/android-ndk-r9b
 
 setlocal ENABLEEXTENSIONS

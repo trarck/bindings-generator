@@ -64,6 +64,16 @@ public:
 	const char *returnsACString();
 
 	int doSomeProcessing(std::string arg1, std::string arg2);
+
+    virtual void virFun();
+    virtual void virFunA();
+};
+
+class SubClass:public SimpleNativeClass
+{
+public:
+    virtual void virFun() override;
+    void virFunA();
 };
 
 namespace SomeNamespace {

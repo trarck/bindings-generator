@@ -61,6 +61,26 @@ void SimpleNativeClass::setAnotherMoreComplexField(const char *str)
 	memcpy(m_anotherMoreComplexField, str, len);
 }
 
+void SimpleNativeClass::virFun()
+{
+
+}
+
+void SimpleNativeClass::virFunA()
+{
+
+}
+
+void SubClass::virFun()
+{
+
+}
+
+void SubClass::virFunA()
+{
+
+}
+
 namespace SomeNamespace
 {
 AnotherClass::AnotherClass()
