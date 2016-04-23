@@ -69,11 +69,22 @@ public:
     virtual void virFunA();
 };
 
-class SubClass:public SimpleNativeClass
+class ITouchable
+{
+public:
+    virtual void onTouch();
+    virtual void onClick(int i);
+    virtual void onClick(int i,int j);
+    virtual void onPoint(SimpleNativeClass* target);
+    virtual void onPoint(SimpleNativeClass* target,int i);
+};
+
+class SubClass:public SimpleNativeClass,ITouchable
 {
 public:
     virtual void virFun() override;
     void virFunA();
+    void SubFun();
 };
 
 namespace SomeNamespace {
