@@ -595,7 +595,7 @@ class NativeFunction(object):
         config = gen.config
         
         #do not create virtual in c#, c++ already virtual
-        #print("Gen fun "+ self.func_name+","+str(self.is_virtual))
+        #print("Gen fun "+ self.func_name+",virtual="+str(self.is_virtual)+",overloaded="+str(self.is_overloaded)+",override="+str(self.is_override))
 
         if not is_ctor:
                 tpl = Template(file=os.path.join(gen.target, "templates", "function.h"),
@@ -647,7 +647,7 @@ class NativeFunction(object):
             else:
                 if gen.script_type == "lua" and current_class != None :
                     current_class.doc_func_file.write(str(apidoc_function_script))
-        if gen.script_type == "csharp":
+        if gen.script_type == "csharp" and not is_override:
                 csharp_internal_function_script = Template(file=os.path.join(gen.target,
                                                         "templates",
                                                         "csharp_internal_function.script"),
@@ -776,7 +776,7 @@ class NativeOverloadedFunction(object):
                                       searchList=[current_class, self])
                     gen.doc_file.write(str(apidoc_function_overload_script))
 
-            if gen.script_type == "csharp":
+            if gen.script_type == "csharp" and not is_override:
                 csharp_internal_function_overload_script = Template(file=os.path.join(gen.target,
                                                         "templates",
                                                         "csharp_internal_function_overload.script"),
@@ -815,6 +815,8 @@ class NativeClass(object):
         self.override_methods = {}
         self.has_constructor  = False
         self.namespace_name   = ""
+ 
+        #print "new class " + self.class_name
 
         registration_name = generator.get_class_or_rename_class(self.class_name)
         if generator.remove_prefix:
@@ -824,6 +826,7 @@ class NativeClass(object):
         self.namespaced_class_name = get_namespaced_name(cursor)
         self.namespace_name        = get_namespace_name(cursor)
         self.parse()
+       
 
     @property
     def underlined_class_name(self):
@@ -938,7 +941,7 @@ class NativeClass(object):
             m['impl'].generate_code(self)
         for m in self.static_methods_clean():
             m['impl'].generate_code(self)
-        if self.generator.script_type == "lua":  
+        if self.generator.script_type == "lua" or self.generator.script_type == "csharp":  
             for m in self.override_methods_clean():
                 m['impl'].generate_code(self, is_override = True)
         for m in self.public_fields:
@@ -1004,6 +1007,14 @@ class NativeClass(object):
 
         return False
 
+    def check_is_override_method_in_parents(current_class, method_name):
+        if len(current_class.parents) > 0:
+            parent = current_class.parents[0]
+            if method_name in parent.methods and parent.methods[method_name].is_virtual:
+                return True
+            return NativeClass._is_method_in_parents(parent, method_name)
+        return False
+
     def _process_node(self, cursor):
         '''
         process the node, depending on the type. If returns true, then it will perform a deep
@@ -1043,6 +1054,11 @@ class NativeClass(object):
                 # bail if the function is not supported (at least one arg not supported)
                 if m.not_supported:
                     return False
+
+                # check override.if no override attribute use in c++
+                if not m.is_override :
+                    m.is_override=self.check_is_override_method_in_parents(registration_name)
+
                 if m.is_override:
                     if NativeClass._is_method_in_parents(self, registration_name):
                         if self.generator.script_type == "lua" or self.generator.script_type == "csharp":
@@ -1408,9 +1424,10 @@ class Generator(object):
             self._deep_iterate(node, depth + 1)
     def scriptname_from_native(self, namespace_class_name, namespace_name):
         script_ns_dict = self.config['conversions']['ns_map']
-        for (k, v) in script_ns_dict.items():
-            if k == namespace_name:
-                return namespace_class_name.replace("*","").replace("const ", "").replace(k, v)
+        if script_ns_dict !=None:
+            for (k, v) in script_ns_dict.items():
+                if k == namespace_name:
+                    return namespace_class_name.replace("*","").replace("const ", "").replace(k, v)
         if namespace_class_name.find("::") >= 0:
             if namespace_class_name.find("std::") == 0:
                 return namespace_class_name
