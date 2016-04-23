@@ -1,22 +1,19 @@
+## ===== check is interface
+#if $is_interface 
+    $generator.csharp_typename_from_native($ret_type) ${generator.script_function_name_format($func_name)}(#slurp
+    ## ===== include parameters
+    #include os.path.join($generator.target,"templates","csharp_function_param.script")
+);
+    #stop
+#end if
 ## ===== function name
 #if $is_constructor
     public ${generator.script_function_name_format($func_name)}(#slurp
 #else
     public $generator.csharp_typename_from_native($ret_type) ${generator.script_function_name_format($func_name)}(#slurp
 #end if
-## ===== parameters 
-#if $min_args > 0
-    #set $length = len($arguments)
-    #set $index = 0
-    #for $arg in $arguments
-        #if $index < $length - 1 
-$generator.csharp_typename_from_native($arg) $argumtntTips[$index],#slurp
-        #else 
-$generator.csharp_typename_from_native($arg) $argumtntTips[$index]#slurp
-        #end if
-        #set $index = $index + 1
-    #end for
-#end if
+## ===== include parameters 
+#include os.path.join($generator.target,"templates","csharp_function_param.script")
 )
     {
 ## ===== call function
@@ -38,6 +35,7 @@ __Instance#slurp
 #end if
 #if $min_args > 0
     #set $index = 0
+    #set $length = len($arguments)
     #for $arg in $arguments
         #if $index < $length - 1 
 $argumtntTips[$index],#slurp
@@ -49,4 +47,3 @@ $argumtntTips[$index]#slurp
 #end if
 );
     }
-

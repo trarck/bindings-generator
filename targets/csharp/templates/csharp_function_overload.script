@@ -1,4 +1,14 @@
 #set $idx = 0
+## ===== check is interface
+#if $is_interface 
+    #for func in $implementations
+    $generator.csharp_typename_from_native($func.ret_type) ${generator.script_function_name_format($func.func_name)}(#slurp
+        ## ===== include parameters
+${generator.parse_class_function_template_file("csharp_function_param.script",$current_class,$func)}#slurp
+);
+    #end for
+    #stop
+#end if
 #for func in $implementations
 ## ===== function name
 #if $func.is_constructor

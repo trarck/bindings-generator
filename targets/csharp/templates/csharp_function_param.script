@@ -1,0 +1,13 @@
+## ===== parameters 
+#if $min_args > 0
+    #set $length = len($arguments)
+    #set $index = 0
+    #for $arg in $arguments
+        #if $index < $length - 1 
+$generator.csharp_typename_from_native($arg) $argumtntTips[$index],#slurp
+        #else 
+$generator.csharp_typename_from_native($arg) $argumtntTips[$index]#slurp
+        #end if
+        #set $index = $index + 1
+    #end for
+#end if

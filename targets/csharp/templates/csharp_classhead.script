@@ -3,24 +3,35 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 #set generator = $current_class.generator
+#set isInterface = $generator.is_interface_class($current_class.class_name)
 
+#if not $isInterface
 /**
  * @class ${current_class.class_name}
  */
-#if $current_class.namespace_name or $generator.target_ns
-#set $script_namespace=$generator.script_namespace_name_from_native($current_class.namespace_name).replace("::",".")
-#if $script_namespace[-1:]=="."
-#set $script_namespace= $script_namespace[0:-1]
-#end if
+    #if $current_class.namespace_name or $generator.target_ns
+    #set $script_namespace=$generator.script_namespace_name_from_native($current_class.namespace_name).replace("::",".")
+    #if $script_namespace[-1:]=="."
+    #set $script_namespace= $script_namespace[0:-1]
+    #end if
 namespace ${script_namespace}
-{
-#end if
+    {
+    #end if
 public class ${current_class.target_class_name} : #slurp
-#if len($current_class.parents)>0 and (not $current_class.parents[0].is_abstract)
-${generator.scriptname_from_native($current_class.parents[0].namespaced_class_name,$current_class.parents[0].namespace_name).replace("::",".")}
-#else
+    #set $length = len($current_class.parents)
+    #if $length>0
+        #set $first = True
+        #for $parent in $current_class.parents
+            #if $first 
+                #set $first = False
+            #else
+,#slurp
+            #end if
+${generator.scriptname_from_native($parent.namespaced_class_name,$parent.namespace_name).replace("::",".")} #slurp
+        #end for
+    #else
 IDisposable
-#end if
+    #end if
 {
     public global::System.IntPtr __Instance { get; protected set; }
 
@@ -40,10 +51,38 @@ IDisposable
     {
        Dispose(false);
     }
-#if not $current_class.methods.has_key('constructor')
+    #if not $current_class.methods.has_key('constructor')
     public ${current_class.target_class_name}()
     {
        __Instance=Internal.ctor();
     }
+    #end if
+#else
+/**
+ * @interface ${current_class.class_name}
+ */
+    #if $current_class.namespace_name or $generator.target_ns
+    #set $script_namespace=$generator.script_namespace_name_from_native($current_class.namespace_name).replace("::",".")
+    #if $script_namespace[-1:]=="."
+    #set $script_namespace= $script_namespace[0:-1]
+    #end if
+namespace ${script_namespace}
+    {
+    #end if
+public interface ${current_class.target_class_name}
+    #set $length = len($current_class.parents)
+    #if $length>0
+: #slurp
+        #set $first = True
+        #for $parent in $current_class.parents
+            #if $first 
+                #set $first = False
+            #else
+,#slurp
+            #end if
+${generator.scriptname_from_native($parent.namespaced_class_name,$parent.namespace_name).replace("::",".")} #slurp
+        #end for
+    #end if
+{
 #end if
 

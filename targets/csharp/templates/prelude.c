@@ -1,4 +1,8 @@
 #set generator = $current_class.generator
+#set isInterface = $generator.is_interface_class($current_class.class_name)
+#if isInterface
+    #stop
+#end if
 #if $current_class.methods.has_key('constructor')
 #set has_constructor = True
 #set constructor = $current_class.methods.constructor

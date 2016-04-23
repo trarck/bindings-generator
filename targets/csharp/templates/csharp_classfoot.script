@@ -1,6 +1,10 @@
 #set generator = $current_class.generator
+#set isInterface = $generator.is_interface_class($current_class.class_name)
+#if not $isInterface
 ${current_class.csharp_internal}
+#end if
 }
 #if $current_class.namespace_name or $generator.target_ns
 }
 #end if
+

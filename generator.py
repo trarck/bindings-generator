@@ -648,23 +648,18 @@ class NativeFunction(object):
                 if gen.script_type == "lua" and current_class != None :
                     current_class.doc_func_file.write(str(apidoc_function_script))
         if gen.script_type == "csharp" and not is_override:
-                csharp_internal_function_script = Template(file=os.path.join(gen.target,
-                                                        "templates",
-                                                        "csharp_internal_function.script"),
-                                      searchList=[current_class, self])
+                csharp_internal_function_script = gen.parse_class_function_template_file(
+                                                        "csharp_internal_function.script",current_class, self)
                 current_class.csharp_internal+=str(csharp_internal_function_script)
 
-                csharp_function_script = Template(file=os.path.join(gen.target,
-                                                        "templates",
-                                                        "csharp_function.script"),
-                                      searchList=[current_class, self])
+                csharp_function_script = gen.parse_class_function_template_file(
+                                                        "csharp_function.script",current_class, self)
                 current_class.csharp_file.write(str(csharp_function_script))
-                #gen original class parameter
+                #gen original class parameter.
+                #class parameter in c++ ,normal translate to Intptr in c#.original_parameter is true,generate c# class as parameter function
                 if config['definitions'].has_key('original_parameter'):
-                    csharp_function_origin_script = Template(file=os.path.join(gen.target,
-                                                        "templates",
-                                                        "csharp_function_origin.script"),
-                                      searchList=[current_class, self])
+                    csharp_function_origin_script = gen.parse_class_function_template_file(
+                                                        "csharp_function_origin.script",current_class, self)
                     current_class.csharp_file.write(str(csharp_function_origin_script))
 
 class NativeOverloadedFunction(object):
@@ -777,23 +772,17 @@ class NativeOverloadedFunction(object):
                     gen.doc_file.write(str(apidoc_function_overload_script))
 
             if gen.script_type == "csharp" and not is_override:
-                csharp_internal_function_overload_script = Template(file=os.path.join(gen.target,
-                                                        "templates",
-                                                        "csharp_internal_function_overload.script"),
-                                      searchList=[current_class, self])
+                csharp_internal_function_overload_script = gen.parse_class_function_template_file(
+                                                        "csharp_internal_function_overload.script",current_class,self)
                 current_class.csharp_internal+=str(csharp_internal_function_overload_script)
 
-                csharp_function_overload_script = Template(file=os.path.join(gen.target,
-                                                        "templates",
-                                                        "csharp_function_overload.script"),
-                                      searchList=[current_class, self])
+                csharp_function_overload_script = gen.parse_class_function_template_file(
+                                                        "csharp_function_overload.script",current_class,self)
                 current_class.csharp_file.write(str(csharp_function_overload_script))
                 #gen original class parameter
                 if config['definitions'].has_key('original_parameter'):
-                    csharp_function_origin_overload_script = Template(file=os.path.join(gen.target,
-                                                        "templates",
-                                                        "csharp_function_origin_overload.script"),
-                                      searchList=[current_class, self])
+                    csharp_function_origin_overload_script = gen.parse_class_function_template_file(
+                                                        "csharp_function_origin_overload.script",current_class, self)
                     current_class.csharp_file.write(str(csharp_function_origin_overload_script))
 
 class NativeClass(object):
@@ -810,6 +799,7 @@ class NativeClass(object):
         self.static_methods = {}
         self.generator = generator
         self.is_abstract = self.class_name in generator.abstract_classes
+        self.is_interface = self.class_name in generator.interface_classes
         self._current_visibility = cindex.AccessSpecifierKind.PRIVATE
         #for generate lua api doc
         self.override_methods = {}
@@ -889,7 +879,7 @@ class NativeClass(object):
             self.is_ref_class = self._is_ref_class()
 
         config = self.generator.config
-        #print("Gen "+self.class_name+" is_abstract="+str(self.is_abstract))
+        print("Gen "+self.class_name+" is_abstract="+str(self.is_abstract) +","+str(len(self.methods_clean())))
         if self.generator.script_type == "csharp":
             csharpfuncfilepath = ""
             if config['definitions'].has_key('use_namespace_path') and config['definitions']['use_namespace_path']:
@@ -1007,12 +997,12 @@ class NativeClass(object):
 
         return False
 
-    def check_is_override_method_in_parents(current_class, method_name):
-        if len(current_class.parents) > 0:
-            parent = current_class.parents[0]
+    def check_is_override_method_in_parents(self, method_name):
+        if len(self.parents) > 0:
+            parent = self.parents[0]
             if method_name in parent.methods and parent.methods[method_name].is_virtual:
                 return True
-            return NativeClass._is_method_in_parents(parent, method_name)
+            return parent.check_is_override_method_in_parents(method_name)
         return False
 
     def _process_node(self, cursor):
@@ -1048,13 +1038,14 @@ class NativeClass(object):
             self._current_visibility = cursor.get_access_specifier()
         elif cursor.kind == cindex.CursorKind.CXX_METHOD and cursor.get_availability() != cindex.AvailabilityKind.DEPRECATED:
             # skip if variadic
+            print("method:"+cursor.spelling+":"+str(cursor.type.is_function_variadic()))
             if self._current_visibility == cindex.AccessSpecifierKind.PUBLIC and not cursor.type.is_function_variadic():
                 m = NativeFunction(cursor)
                 registration_name = self.generator.should_rename_function(self.class_name, m.func_name) or m.func_name
                 # bail if the function is not supported (at least one arg not supported)
                 if m.not_supported:
                     return False
-
+                
                 # check override.if no override attribute use in c++
                 if not m.is_override :
                     m.is_override=self.check_is_override_method_in_parents(registration_name)
@@ -1149,6 +1140,7 @@ class Generator(object):
         self.cpp_headers = opts['cpp_headers']
         self.win32_clang_flags = opts['win32_clang_flags']
         self.user_config=opts['user_config']
+        self.interface_classes = opts['interface_classes'].split(' ')
 
         extend_clang_args = []
 
@@ -1422,6 +1414,17 @@ class Generator(object):
         for node in cursor.get_children():
             # print("%s %s - %s" % (">" * depth, node.displayname, node.kind))
             self._deep_iterate(node, depth + 1)
+
+    def parse_template_file(self,template_fle,searchList):
+        tpl = Template(file=os.path.join(self.target, "templates", template_fle),
+                                    searchList=searchList)
+        return tpl
+
+    def parse_class_function_template_file(self,template_fle,class_obj,func_obj):
+        tpl = Template(file=os.path.join(self.target, "templates", template_fle),
+                                    searchList=[class_obj, func_obj,{'current_class':class_obj,'current_func':func_obj}])
+        return tpl
+
     def scriptname_from_native(self, namespace_class_name, namespace_name):
         script_ns_dict = self.config['conversions']['ns_map']
         if script_ns_dict !=None:
@@ -1657,9 +1660,10 @@ class Generator(object):
 
     def script_type_class_name(self,native_type):
         script_ns_dict = self.config['conversions']['ns_map']
-        for (k, v) in script_ns_dict.items():
-            if k == native_type.namespace_name:
-                return native_type.namespaced_name.replace("*","").replace("const ", "").replace(k, v)
+        if script_ns_dict!=None:            
+            for (k, v) in script_ns_dict.items():
+                if k == native_type.namespace_name:
+                    return native_type.namespaced_name.replace("*","").replace("const ", "").replace(k, v)
         return native_type.namespaced_name.replace("*","").replace("const ", "")
     
     def csharp_internal_native_lib(self):
@@ -1668,6 +1672,13 @@ class Generator(object):
                                     searchList=[self])
             return str(tpl)
         return ""
+
+    def is_interface_class(self,class_name):
+        if class_name in self.interface_classes:
+            return True
+        else:            
+            return False
+
 def main():
     from optparse import OptionParser
 
@@ -1769,7 +1780,9 @@ def main():
                 'hpp_headers': config.get(s, 'hpp_headers', 0, dict(userconfig.items('DEFAULT'))).split(' ') if config.has_option(s, 'hpp_headers') else None,
                 'cpp_headers': config.get(s, 'cpp_headers', 0, dict(userconfig.items('DEFAULT'))).split(' ') if config.has_option(s, 'cpp_headers') else None,
                 'win32_clang_flags': (config.get(s, 'win32_clang_flags', 0, dict(userconfig.items('DEFAULT'))) or "").split(" ") if config.has_option(s, 'win32_clang_flags') else None,
-                'user_config':generator_user_config if userconfig.has_option('DEFAULT', 'generator_config') else None
+                'interface_classes': config.get(s, 'interface_classes') if config.has_option(s, 'interface_classes') else "",
+                'user_config':generator_user_config if userconfig.has_option('DEFAULT', 'generator_config') else None,
+                'config':config
                 }
             generator = Generator(gen_opts)
             generator.generate_code()

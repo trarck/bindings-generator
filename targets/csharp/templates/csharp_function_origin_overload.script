@@ -1,4 +1,28 @@
 #set $idx = 0
+## ===== check is interface
+#if $is_interface 
+    #for func in $implementations
+        ## ===== check have object parameter and is generator class
+        #set $have_class_parameter=False
+        #if $min_args > 0
+            #set $length = len($func.arguments)
+            #set $index = 0
+            #for $arg in $func.arguments
+                #if $arg.is_object and $generator.type_is_class($arg)
+                    #set $have_class_parameter=True
+                    #break
+                #end if
+            #end for
+        #end if
+        #if $have_class_parameter
+    $generator.csharp_typename_from_native($func.ret_type) ${generator.script_function_name_format($func.func_name)}(#slurp
+        ## ===== include parameters
+${generator.parse_class_function_template_file("csharp_function_origin_param.script",$current_class,$func)}#slurp
+);
+        #end if
+    #end for
+    #stop
+#end if
 #for func in $implementations
     ## ===== check have object parameter and is generator class
     #set $have_class_parameter=False
