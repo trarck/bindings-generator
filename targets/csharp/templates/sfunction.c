@@ -18,7 +18,7 @@ $arg $argumtntTips[$index]#slurp
 #if $ret_type
     return #slurp
 #end if
-${class_name}::${func_name}(#slurp
+${namespaced_class_name}::${func_name}(#slurp
 #if $min_args > 0
     #set $index = 0
     #for $arg in $arguments

@@ -7,11 +7,7 @@
     #stop
 #end if
 ## ===== function name
-#if $is_constructor
-    public ${generator.script_function_name_format($func_name)}(#slurp
-#else
-    public $generator.csharp_typename_from_native($ret_type) ${generator.script_function_name_format($func_name)}(#slurp
-#end if
+    ${generator.parse_class_function_template_file("csharp_function_name.script",$current_class,$current_func)}#slurp
 ## ===== include parameters 
 #include os.path.join($generator.target,"templates","csharp_function_param.script")
 )

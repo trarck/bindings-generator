@@ -11,11 +11,7 @@ ${generator.parse_class_function_template_file("csharp_function_param.script",$c
 #end if
 #for func in $implementations
 ## ===== function name
-#if $func.is_constructor
-    public ${generator.script_function_name_format(func.func_name)}(#slurp
-#else
-    public $generator.csharp_typename_from_native($func.ret_type) ${generator.script_function_name_format(func.func_name)}(#slurp
-#end if
+    ${generator.parse_class_function_template_file("csharp_function_name.script",$current_class,$func)}#slurp
 ## ===== parameters 
     #if $func.min_args > 0
         #set $length = len($func.arguments)

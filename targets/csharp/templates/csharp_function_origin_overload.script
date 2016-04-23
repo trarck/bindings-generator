@@ -3,7 +3,7 @@
 #if $is_interface 
     #for func in $implementations
         ## ===== check have object parameter and is generator class
-        #set $have_class_parameter=False
+        #set $have_class_parameter=$func.ret_type.is_object and $generator.type_is_class($func.ret_type)
         #if $min_args > 0
             #set $length = len($func.arguments)
             #set $index = 0
@@ -17,7 +17,7 @@
         #if $have_class_parameter
     $generator.csharp_typename_from_native($func.ret_type) ${generator.script_function_name_format($func.func_name)}(#slurp
         ## ===== include parameters
-${generator.parse_class_function_template_file("csharp_function_origin_param.script",$current_class,$func)}#slurp
+${generator.parse_class_function_template_file("csharp_function_param_origin.script",$current_class,$func)}#slurp
 );
         #end if
     #end for
@@ -25,7 +25,7 @@ ${generator.parse_class_function_template_file("csharp_function_origin_param.scr
 #end if
 #for func in $implementations
     ## ===== check have object parameter and is generator class
-    #set $have_class_parameter=False
+    #set $have_class_parameter=$func.ret_type.is_object and $generator.type_is_class($func.ret_type)
     #if $min_args > 0
         #set $length = len($func.arguments)
         #set $index = 0
@@ -38,11 +38,7 @@ ${generator.parse_class_function_template_file("csharp_function_origin_param.scr
     #end if
     #if $have_class_parameter
         ## ===== function name
-        #if $func.is_constructor
-    public ${generator.script_function_name_format(func.func_name)}(#slurp
-        #else
-    public $generator.csharp_typename_from_native($func.ret_type) ${generator.script_function_name_format(func.func_name)}(#slurp
-        #end if
+        $generator.csharp_typename_from_native($ret_type) ${generator.script_function_name_format($func)}(#slurp
         ## ===== parameters 
             #if $func.min_args > 0
                 #set $length = len($func.arguments)

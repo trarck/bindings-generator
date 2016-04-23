@@ -1,0 +1,18 @@
+## ===== access allways public
+public #slurp
+## ===== static
+#if $static
+static #slurp
+#end if
+## ===== return type
+#set retType=""
+#if not $is_constructor
+    #set retType=$generator.csharp_typename_from_native($ret_type)
+    #if $ret_type.is_object and $generator.type_is_class($ret_type)
+        #set retType = $generator.script_type_class_name($ret_type)
+    #end if
+#end if
+$retType #slurp
+## ===== function name
+${generator.script_function_name_format($func_name)}#slurp
+(

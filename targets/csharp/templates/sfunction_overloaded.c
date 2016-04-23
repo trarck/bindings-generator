@@ -20,7 +20,7 @@ $arg $func.argumtntTips[$index]#slurp
     #if $func.ret_type
     return #slurp
     #end if
-${class_name}::${func.func_name}(#slurp
+${namespaced_class_name}::${func.func_name}(#slurp
     #if $func.min_args > 0
         #set $index = 0
         #for $arg in $func.arguments

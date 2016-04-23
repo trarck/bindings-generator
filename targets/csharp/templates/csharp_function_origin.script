@@ -1,5 +1,5 @@
 ## ===== check have object parameter and is generator class
-#set $have_class_parameter=False
+#set $have_class_parameter=$ret_type.is_object and $generator.type_is_class($ret_type)
 #if $min_args > 0
     #set $length = len($arguments)
     #set $index = 0
@@ -15,18 +15,14 @@
 #if $is_interface 
     $generator.csharp_typename_from_native($ret_type) ${generator.script_function_name_format($func_name)}(#slurp
     ## ===== include parameters
-    #include os.path.join($generator.target,"templates","csharp_function_origin_param.script")
+    #include os.path.join($generator.target,"templates","csharp_function_param_origin.script")
 );
     #stop
 #end if
 ## ===== function name
-    #if $is_constructor
-    public ${generator.script_function_name_format($func_name)}(#slurp
-    #else
-    public $generator.csharp_typename_from_native($ret_type) ${generator.script_function_name_format($func_name)}(#slurp
-    #end if
+    ${generator.parse_class_function_template_file("csharp_function_name_origin.script",$current_class,$current_func)}#slurp
 ## ===== parameters 
-    #include os.path.join($generator.target,"templates","csharp_function_origin_param.script")
+    #include os.path.join($generator.target,"templates","csharp_function_origin_param_origin.script")
 )
     {
 ## ===== call function

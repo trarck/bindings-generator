@@ -57,6 +57,11 @@ IDisposable
        __Instance=Internal.ctor();
     }
     #end if
+
+    public ${current_class.target_class_name}(IntPtr instance)
+    {
+       __Instance=instance;
+    }
 #else
 /**
  * @interface ${current_class.class_name}
