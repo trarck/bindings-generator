@@ -38,7 +38,7 @@ ${generator.parse_class_function_template_file("csharp_function_param_origin.scr
     #end if
     #if $have_class_parameter
         ## ===== function name
-        $generator.csharp_typename_from_native($ret_type) ${generator.script_function_name_format($func)}(#slurp
+        $generator.csharp_typename_from_native($func.ret_type) ${generator.script_function_name_format($func.func_name)}(#slurp
         ## ===== parameters 
             #if $func.min_args > 0
                 #set $length = len($func.arguments)

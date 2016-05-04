@@ -22,7 +22,7 @@
 ## ===== function name
     ${generator.parse_class_function_template_file("csharp_function_name_origin.script",$current_class,$current_func)}#slurp
 ## ===== parameters 
-    #include os.path.join($generator.target,"templates","csharp_function_origin_param_origin.script")
+    #include os.path.join($generator.target,"templates","csharp_function_param_origin.script")
 )
     {
 ## ===== call function
