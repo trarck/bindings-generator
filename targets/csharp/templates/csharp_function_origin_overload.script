@@ -38,14 +38,15 @@ ${generator.parse_class_function_template_file("csharp_function_param_origin.scr
     #end if
     #if $have_class_parameter
         ## ===== function name
-        $generator.csharp_typename_from_native($func.ret_type) ${generator.script_function_name_format($func.func_name)}(#slurp
+        ##$generator.csharp_typename_from_native($func.ret_type) ${generator.script_function_name_format($func.func_name)}(#slurp
+    ${generator.parse_class_function_template_file("csharp_function_name_origin.script",$current_class,$func)}#slurp
         ## ===== parameters 
             #if $func.min_args > 0
                 #set $length = len($func.arguments)
                 #set $index = 0
                 #for $arg in $func.arguments
                     #if $arg.is_object and $generator.type_is_class($arg)
-$generator.script_type_class_name($arg) $func.argumtntTips[$index]#slurp
+$generator.script_type_class_name($arg).replace("::",".") $func.argumtntTips[$index]#slurp
                     #else
 $generator.csharp_typename_from_native($arg) $func.argumtntTips[$index]#slurp
                     #end if

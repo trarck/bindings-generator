@@ -4,7 +4,7 @@
     #set $index = 0
     #for $arg in $arguments
         #if $arg.is_object and $generator.type_is_class($arg)
-$generator.script_type_class_name($arg) $argumtntTips[$index]#slurp
+$generator.script_type_class_name($arg).replace("::",".") $argumtntTips[$index]#slurp
         #else
 $generator.csharp_typename_from_native($arg) $argumtntTips[$index]#slurp
         #end if

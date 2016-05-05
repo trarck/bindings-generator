@@ -95,8 +95,8 @@ def native_name_from_type(ntype, underlying=False):
             # print >> sys.stderr, "probably a function pointer: " + str(decl.spelling)
             return const + decl.spelling
     else:
-        # name = ntype.get_declaration().spelling
-        # print >> sys.stderr, "Unknown type: " + str(kind) + " " + str(name)
+        #name = ntype.get_declaration().spelling
+        #print >> sys.stderr, "Unknown type: " + str(kind) + " " + str(name)
         return INVALID_NATIVE_TYPE
         # pdb.set_trace()
 
@@ -1038,11 +1038,12 @@ class NativeClass(object):
             self._current_visibility = cursor.get_access_specifier()
         elif cursor.kind == cindex.CursorKind.CXX_METHOD and cursor.get_availability() != cindex.AvailabilityKind.DEPRECATED:
             # skip if variadic
-            print("method:"+cursor.spelling+":"+str(cursor.type.is_function_variadic()))
+            #print("method:"+cursor.spelling+":"+str(cursor.type.is_function_variadic()))
             if self._current_visibility == cindex.AccessSpecifierKind.PUBLIC and not cursor.type.is_function_variadic():
                 m = NativeFunction(cursor)
                 registration_name = self.generator.should_rename_function(self.class_name, m.func_name) or m.func_name
                 # bail if the function is not supported (at least one arg not supported)
+                print("method:"+cursor.spelling+":"+str(m.not_supported))
                 if m.not_supported:
                     return False
                 

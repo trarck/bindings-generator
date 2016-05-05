@@ -15,7 +15,7 @@ using System.Runtime.InteropServices;
     #set $script_namespace= $script_namespace[0:-1]
     #end if
 namespace ${script_namespace}
-    {
+{
     #end if
 public class ${current_class.target_class_name} : #slurp
     #set $length = len($current_class.parents)
@@ -72,7 +72,7 @@ IDisposable
     #set $script_namespace= $script_namespace[0:-1]
     #end if
 namespace ${script_namespace}
-    {
+{
     #end if
 public interface ${current_class.target_class_name}
     #set $length = len($current_class.parents)

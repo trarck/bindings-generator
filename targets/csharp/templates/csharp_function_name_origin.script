@@ -9,7 +9,7 @@ static #slurp
 #if not $is_constructor
     #set retType=$generator.csharp_typename_from_native($ret_type)
     #if $ret_type.is_object and $generator.type_is_class($ret_type)
-        #set retType = $generator.script_type_class_name($ret_type)
+        #set retType = $generator.script_type_class_name($ret_type).replace("::",".")
     #end if
 #end if
 $retType #slurp
